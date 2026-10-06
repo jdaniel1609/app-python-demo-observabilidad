@@ -1,0 +1,13 @@
+# Kubernetes
+docker-compose.yaml
+deploy.sh
+
+# Local
+.env
+*.log
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
