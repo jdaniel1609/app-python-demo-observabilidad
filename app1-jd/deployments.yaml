@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
       - name: app
-        image: app1-jd:latest
-        imagePullPolicy: IfNotPresent
+        image: docker.io/jdaniel1609/app1-jd:1.0
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -56,8 +56,8 @@ spec:
     spec:
       containers:
       - name: app
-        image: app1-jd:latest
-        imagePullPolicy: IfNotPresent
+        image: docker.io/jdaniel1609/app1-jd:1.0
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
