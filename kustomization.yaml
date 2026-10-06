@@ -3,9 +3,6 @@ kind: Kustomization
 resources:
 - app1-jd
 - app2-md
-labels:
-- pairs:
-    project: dynatrace-demo
-    managed-by: kustomize
-    includeSelectors: true
-    includeTemplates: true
+commonLabels:
+  project: dynatrace-demo
+  managed-by: kustomize

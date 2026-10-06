@@ -3,8 +3,5 @@ kind: Kustomization
 resources:
 - deployments.yaml
 - services.yaml
-labels:
-- pairs:
-    app: app2-md
-    includeSelectors: true
-    includeTemplates: true
+commonLabels:
+  app: app2-md
