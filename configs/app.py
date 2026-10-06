@@ -26,6 +26,9 @@ SUCCESS_RATE = float(os.getenv("SUCCESS_RATE", "0.6"))
 PORT = int(os.getenv("PORT", "8080"))
 OTEL_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
 
+# Prometheus metric names must not contain hyphens
+METRIC_APP_NAME = APP_NAME.replace("-", "_")
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(APP_NAME)
 
@@ -46,13 +49,13 @@ meter_provider = MeterProvider(resource=resource, metric_readers=[
 metrics.set_meter_provider(meter_provider)
 meter = metrics.get_meter(APP_NAME)
 
-REQUESTS = Counter(f'{APP_NAME}_requests_total', 'Total requests', ['status'])
-LATENCY = Histogram(f'{APP_NAME}_latency_seconds', 'Request latency')
-ERRORS = Counter(f'{APP_NAME}_errors_total', 'Total errors')
+REQUESTS = Counter(f'{METRIC_APP_NAME}_requests_total', 'Total requests', ['status'])
+LATENCY = Histogram(f'{METRIC_APP_NAME}_latency_seconds', 'Request latency')
+ERRORS = Counter(f'{METRIC_APP_NAME}_errors_total', 'Total errors')
 
-otel_requests = meter.create_counter(f"{APP_NAME}.requests", description="Requests")
-otel_latency = meter.create_histogram(f"{APP_NAME}.latency", description="Latency")
-otel_errors = meter.create_counter(f"{APP_NAME}.errors", description="Errors")
+otel_requests = meter.create_counter(f"{METRIC_APP_NAME}.requests", description="Requests")
+otel_latency = meter.create_histogram(f"{METRIC_APP_NAME}.latency", description="Latency")
+otel_errors = meter.create_counter(f"{METRIC_APP_NAME}.errors", description="Errors")
 
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
