@@ -71,26 +71,27 @@ def metrics_ep():
 @app.route("/")
 def index():
     start = time.time()
-    with tracer.start_as_current_span("request") as span:
-        span.set_attribute("app", APP_NAME)
-        span.set_attribute("namespace", NAMESPACE)
-        
-        if should_succeed():
-            REQUESTS.labels(status="success").inc()
-            otel_requests.add(1, {"status": "success"})
-            logger.info(f"Success request from {APP_NAME}/{NAMESPACE}")
-            return jsonify({"ok": True, "app": APP_NAME, "ns": NAMESPACE})
-        else:
-            REQUESTS.labels(status="error").inc()
-            ERRORS.inc()
-            otel_requests.add(1, {"status": "error"})
-            otel_errors.add(1)
-            logger.error(f"Error request from {APP_NAME}/{NAMESPACE}")
-            return jsonify({"ok": False, "error": "Random failure", "app": APP_NAME, "ns": NAMESPACE}), 500
-        finally:
-            dur = time.time() - start
-            LATENCY.observe(dur)
-            otel_latency.record(dur)
+    try:
+        with tracer.start_as_current_span("request") as span:
+            span.set_attribute("app", APP_NAME)
+            span.set_attribute("namespace", NAMESPACE)
+            
+            if should_succeed():
+                REQUESTS.labels(status="success").inc()
+                otel_requests.add(1, {"status": "success"})
+                logger.info(f"Success request from {APP_NAME}/{NAMESPACE}")
+                return jsonify({"ok": True, "app": APP_NAME, "ns": NAMESPACE})
+            else:
+                REQUESTS.labels(status="error").inc()
+                ERRORS.inc()
+                otel_requests.add(1, {"status": "error"})
+                otel_errors.add(1)
+                logger.error(f"Error request from {APP_NAME}/{NAMESPACE}")
+                return jsonify({"ok": False, "error": "Random failure", "app": APP_NAME, "ns": NAMESPACE}), 500
+    finally:
+        dur = time.time() - start
+        LATENCY.observe(dur)
+        otel_latency.record(dur)
 
 if __name__ == "__main__":
     logger.info(f"Starting {APP_NAME} in {NAMESPACE} (success={SUCCESS_RATE*100}%)")
