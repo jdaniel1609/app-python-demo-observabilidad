@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1-jd
+  namespace: app1-jd-ns1
+  labels:
+    app: app1-jd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1-jd
+  template:
+    metadata:
+      labels:
+        app: app1-jd
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+      - name: app
+        image: app1-jd:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_NAME
+          value: "app1-jd"
+        - name: NAMESPACE
+          value: "ns1"
+        - name: SUCCESS_RATE
+          value: "0.6"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.monitoring.svc.cluster.local:4317"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1-jd
+  namespace: app1-jd-ns2
+  labels:
+    app: app1-jd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1-jd
+  template:
+    metadata:
+      labels:
+        app: app1-jd
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+      - name: app
+        image: app1-jd:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_NAME
+          value: "app1-jd"
+        - name: NAMESPACE
+          value: "ns2"
+        - name: SUCCESS_RATE
+          value: "0.6"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.monitoring.svc.cluster.local:4317"

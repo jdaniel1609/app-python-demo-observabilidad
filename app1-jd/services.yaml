@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-jd
+  namespace: app1-jd-ns1
+  labels:
+    app: app1-jd
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: app1-jd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-jd
+  namespace: app1-jd-ns2
+  labels:
+    app: app1-jd
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: app1-jd

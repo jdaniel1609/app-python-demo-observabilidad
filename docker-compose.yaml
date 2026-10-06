@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.106.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./configs/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - demo
+
+  app1-jd-ns1:
+    build:
+      context: .
+      dockerfile: configs/Dockerfile
+    image: app1-jd:latest
+    environment:
+      - APP_NAME=app1-jd
+      - NAMESPACE=ns1
+      - SUCCESS_RATE=0.6
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    ports:
+      - "8081:8080"
+    networks:
+      - demo
+    depends_on:
+      - otel-collector
+
+  app1-jd-ns2:
+    build:
+      context: .
+      dockerfile: configs/Dockerfile
+    image: app1-jd:latest
+    environment:
+      - APP_NAME=app1-jd
+      - NAMESPACE=ns2
+      - SUCCESS_RATE=0.6
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    ports:
+      - "8082:8080"
+    networks:
+      - demo
+    depends_on:
+      - otel-collector
+
+  app2-md-ns1:
+    build:
+      context: .
+      dockerfile: configs/Dockerfile
+    image: app2-md:latest
+    environment:
+      - APP_NAME=app2-md
+      - NAMESPACE=ns1
+      - SUCCESS_RATE=0.6
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    ports:
+      - "8083:8080"
+    networks:
+      - demo
+    depends_on:
+      - otel-collector
+
+  app2-md-ns2:
+    build:
+      context: .
+      dockerfile: configs/Dockerfile
+    image: app2-md:latest
+    environment:
+      - APP_NAME=app2-md
+      - NAMESPACE=ns2
+      - SUCCESS_RATE=0.6
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    ports:
+      - "8084:8080"
+    networks:
+      - demo
+    depends_on:
+      - otel-collector
+
+networks:
+  demo:
+    driver: bridge
