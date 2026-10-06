@@ -1,6 +1,5 @@
 # Kubernetes
 docker-compose.yaml
-deploy.sh
 
 # Local
 .env
